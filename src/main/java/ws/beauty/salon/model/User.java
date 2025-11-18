@@ -1,6 +1,5 @@
 package ws.beauty.salon.model;
 
-
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.Entity;
@@ -23,7 +22,7 @@ public class User {
     @Column(name = "id_user")
     private Integer id;
 
-    @Column(name = "userName", unique = true, nullable = false, length = 50)
+    @Column(name = "username", unique = true, nullable = false, length = 50)
     private String username;
 
     @Column(name = "password", nullable = false, length = 255)

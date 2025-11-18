@@ -1,0 +1,157 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+ 
+  # Price Histories
+  findAllPriceHistories: [ServicePriceHistoryResponse]
+  findPriceHistoryById(id: Int): ServicePriceHistoryResponse
+  findPriceHistoriesByServiceId(serviceId: Int): [ServicePriceHistoryResponse]
+  findLatestPriceByServiceId(serviceId: Int): ServicePriceHistoryResponse
+  findPriceHistoriesByUserId(userId: Int): [ServicePriceHistoryResponse]
+  findPriceHistoriesByOldPriceGreaterThan(value: Float): [ServicePriceHistoryResponse]
+  findPriceHistoriesByNewPriceLessThan(value: Float): [ServicePriceHistoryResponse]
+
+  # Reschedule Requests
+  findAllRescheduleRequests: [RescheduleRequestResponse]
+  findRescheduleRequestById(id: Int): RescheduleRequestResponse
+  #findRescheduleRequestsByClient(clientId: Int): [RescheduleRequestResponse]
+  #findRescheduleRequestsByStatus(status: String): [RescheduleRequestResponse]
+
+  # Services
+  findAllServices: [ServiceResponse]
+  findServiceById(id: Int!): ServiceResponse
+  findServicesByName(name: String!): [ServiceResponse]
+  findServicesByCategory(categoryId: Int!): [ServiceResponse]
+
+  # Stylists
+  findAll: [StylistResponse]
+  findById(idStylist: Int): StylistResponse
+
+  # Stylist Services
+  findAllStylistServices: [StylistServiceResponse]
+  findStylistServiceById(stylistId: Int!, serviceId: Int!, appointmentId: Int!): StylistServiceResponse
+  findStylistServicesByStylist(stylistId: Int!): [StylistServiceResponse]
+  findStylistServicesByService(serviceId: Int!): [StylistServiceResponse]
+
+}
+
+# ----------------------
+# Mutation unificada
+# ----------------------
+type Mutation {
+
+  # Price Histories
+  createPriceHistory(request: ServicePriceHistoryDTO!): ServicePriceHistoryResponse
+  updatePriceHistory(id: Int!, request: ServicePriceHistoryDTO!): ServicePriceHistoryResponse
+
+  # Reschedule Requests
+  createRescheduleRequest(request: RescheduleRequestRequest!): RescheduleRequestResponse
+  updateRescheduleRequest(id: Int!, request: RescheduleRequestRequest!): RescheduleRequestResponse
+
+  # Services
+  createService(req: ServiceRequest): ServiceResponse
+  updateService(id: Int!, req: ServiceRequest): ServiceResponse
+  deleteService(id: Int!): Boolean
+
+  # Stylists
+  create(req: StylistRequest): StylistResponse
+  update(idStylist: Int, req: StylistRequest): StylistResponse
+  delete(idStylist: Int): Boolean
+
+  # Stylist Services
+  createStylistService(req: StylistServiceDTO!): StylistServiceResponse
+
+}
+
+# ----------------------
+# Tipos e Inputs
+# ----------------------
+
+
+type ServicePriceHistoryResponse {
+  idPrice: Int!
+  idService: Int!
+  serviceName: String!
+  oldPrice: Float!
+  newPrice: Float!
+  changedAt: String!
+  changedById: Int
+  changedByName: String
+}
+
+input ServicePriceHistoryDTO {
+    serviceId: Int!
+  oldPrice: Float!
+  newPrice: Float!
+  changedById: Int
+}
+
+type RescheduleRequestResponse {
+  idRequest: ID!
+  appointmentId: Int!
+  clientId: Int!
+  requestedDate: String
+  status: String
+  reason: String
+  createdAt: String
+}
+
+input RescheduleRequestRequest {
+  appointmentId: Int!
+  clientId: Int!
+  requestedDate: String!
+  status: String!
+  reason: String!
+}
+
+type ServiceResponse {
+  id: ID!
+  serviceName: String!
+  description: String
+  price: Float!
+  estimatedDuration: String
+  categoryName: String
+  createdAt: String
+}
+
+input ServiceRequest {
+  serviceName: String!
+  description: String
+  price: Float!
+  estimatedDuration: String
+  categoryId: Int
+}
+
+type StylistResponse {
+  idStylist: ID!
+  firstName: String!
+  lastName: String!
+  specialty: String
+  workSchedule: String
+  available: Boolean
+}
+
+input StylistRequest {
+  firstName: String!
+  lastName: String!
+  specialty: String
+  workSchedule: String
+  available: Boolean
+}
+
+type StylistServiceResponse {
+  appointmentId: Int!
+  serviceId: Int!
+  stylistId: Int!
+  serviceName: String!
+  stylistName: String!
+}
+
+input StylistServiceDTO {
+  stylistId: Int!
+  serviceId: Int!
+  appointmentId: Int!
+}

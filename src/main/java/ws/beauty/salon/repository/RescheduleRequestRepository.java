@@ -1,20 +1,27 @@
 package ws.beauty.salon.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import ws.beauty.salon.model.RescheduleRequest;
 
-import java.util.List;
-
+@Repository
 public interface RescheduleRequestRepository extends JpaRepository<RescheduleRequest, Integer> {
 
-    @Query("SELECT r FROM RescheduleRequest r WHERE r.client.id = :clientId")
-    List<RescheduleRequest> findByClientId(@Param("clientId") Integer clientId);
+    //  Buscar solicitudes por estado (pending, approved, rejected, etc.)
+    List<RescheduleRequest> findByStatus(String status);
 
+    //  Buscar todas las solicitudes de un cliente por su ID
+    List<RescheduleRequest> findByClientId(Integer clientId);
 
+    //  Buscar solicitudes con texto en el motivo
+    @Query("SELECT r FROM RescheduleRequest r WHERE LOWER(r.reason) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<RescheduleRequest> searchByReason(@Param("keyword") String keyword);
 
-    @Query("SELECT r FROM RescheduleRequest r WHERE r.status = :status")
-    List<RescheduleRequest> findByStatus(@Param("status") String status);
+    //  Buscar solicitudes más recientes primero
+    @Query("SELECT r FROM RescheduleRequest r ORDER BY r.createdAt DESC")
+    List<RescheduleRequest> findAllOrderByCreatedAtDesc(); 
 }
-
