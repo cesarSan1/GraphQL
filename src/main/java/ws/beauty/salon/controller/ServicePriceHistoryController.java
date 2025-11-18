@@ -1,78 +1,90 @@
 package ws.beauty.salon.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import java.net.URI;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ws.beauty.salon.dto.PriceHistoryRequest;
-import ws.beauty.salon.dto.PriceHistoryResponse;
-import ws.beauty.salon.service.PriceHistoryService;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import ws.beauty.salon.dto.ServicePriceHistoryDTO;
+import ws.beauty.salon.dto.ServicePriceHistoryResponse;
+import ws.beauty.salon.service.ServicePriceHistoryService;
 
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/service-price-history")
-@Tag(name = "Service Price History", description = "Manages price change history for services")
+@RequestMapping("/api/service_price-history")
+@Tag(name = "Service Price History", description = "Manages price change history for services") 
 public class ServicePriceHistoryController {
 
-    @Autowired
-    private PriceHistoryService service;
+    private final ServicePriceHistoryService service;
 
-    @Operation(summary = "Get all price history records")
-    @ApiResponse(responseCode = "200", description = "Found records",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PriceHistoryResponse.class))))
     @GetMapping
-    public List<PriceHistoryResponse> getAll() {
+    @Operation(summary = "Get all price history records")
+    public List<ServicePriceHistoryResponse> findAll() {
         return service.findAll();
     }
 
-    @Operation(summary = "Get price history by ID")
-    @ApiResponse(responseCode = "200", description = "Found record")
+    @GetMapping("/pagination")
+    @Operation(summary = "Get price history with pagination")
+    public List<ServicePriceHistoryResponse> findAllPaged(
+            @RequestParam int page,
+            @RequestParam int pageSize) {
+        return service.findAll(page, pageSize);
+    }
+
     @GetMapping("/{id}")
-    public PriceHistoryResponse getById(@PathVariable Integer id) {
+    @Operation(summary = "Get price history by ID")
+    public ServicePriceHistoryResponse findById(@PathVariable Integer id) {
         return service.findById(id);
     }
 
-    @Operation(summary = "Create a new price history record")
-    @ApiResponse(responseCode = "201", description = "Created record")
-    @PostMapping
-    public ResponseEntity<PriceHistoryResponse> create(@RequestBody PriceHistoryRequest request) {
-        PriceHistoryResponse saved = service.create(request);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
-    }
-
-    @Operation(summary = "Update a price history record")
-    @ApiResponse(responseCode = "200", description = "Updated record")
-    @PutMapping("/{id}")
-    public PriceHistoryResponse update(@PathVariable Integer id, @RequestBody PriceHistoryRequest request) {
-        return service.update(id, request);
-    }
-
-    @Operation(summary = "Delete a price history record")
-    @ApiResponse(responseCode = "204", description = "Deleted successfully")
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Integer id) {
-        service.delete(id);
-    }
-
-    @Operation(summary = "Get price history by service ID")
-    @ApiResponse(responseCode = "200", description = "Found records by service")
     @GetMapping("/service/{serviceId}")
-    public List<PriceHistoryResponse> findByService(@PathVariable Integer serviceId) {
-        return service.findByService(serviceId);
+    @Operation(summary = "Get price history by service ID")
+    public List<ServicePriceHistoryResponse> findByServiceId(@PathVariable Integer serviceId) {
+        return service.findByServiceId(serviceId);
     }
 
-    @Operation(summary = "Get price history by user ID")
-    @ApiResponse(responseCode = "200", description = "Found records by user")
-    @GetMapping("/user/{userId}")
-    public List<PriceHistoryResponse> findByUser(@PathVariable Integer userId) {
-        return service.findByUser(userId);
+    @GetMapping("/service/{serviceId}/latest")
+    @Operation(summary = "Get latest price change for a service")
+    public ServicePriceHistoryResponse findLatestByServiceId(@PathVariable Integer serviceId) {
+        return service.findLatestByServiceId(serviceId);
     }
-}
+
+    @GetMapping("/user/{userId}")
+    @Operation(summary = "Get price changes made by a user")
+    public List<ServicePriceHistoryResponse> findByUserId(@PathVariable Integer userId) {
+        return service.findByChangedById(userId);
+    }
+
+    @GetMapping("/old-price-greater-than/{value}")
+    @Operation(summary = "Get records where old price is greater than value")
+    public List<ServicePriceHistoryResponse> findByOldPriceGreaterThan(@PathVariable Double value) {
+        return service.findByOldPriceGreaterThan(value);
+    }
+
+    @GetMapping("/new-price-less-than/{value}")
+    @Operation(summary = "Get records where new price is less than value")
+    public List<ServicePriceHistoryResponse> findByNewPriceLessThan(@PathVariable Double value) {
+        return service.findByNewPriceLessThan(value);
+    }
+
+    @PostMapping
+    @Operation(summary = "Create new price history record")
+    public ResponseEntity<ServicePriceHistoryResponse> create(@Valid @RequestBody ServicePriceHistoryDTO req) {
+        ServicePriceHistoryResponse created = service.create(req);
+        return ResponseEntity
+                .created(URI.create("/api/service-price-history/" + created.getIdPrice()))
+                .body(created);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update price history record")
+    public ServicePriceHistoryResponse update(
+            @PathVariable Integer id,
+            @Valid @RequestBody ServicePriceHistoryDTO req) {
+        return service.update(id, req);
+    }
+} 

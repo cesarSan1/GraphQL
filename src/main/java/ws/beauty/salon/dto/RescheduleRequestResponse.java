@@ -1,22 +1,31 @@
 package ws.beauty.salon.dto;
 
-import java.time.LocalDateTime;
-
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
+@Data 
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class RescheduleRequestResponse {
+
+    @JsonProperty("Id")
     private Integer idRequest;
+
+    @JsonProperty("Id Appointment")
     private Integer appointmentId;
+
+    @JsonProperty("Id Cient")
     private Integer clientId;
-    private LocalDateTime requestedDate;
+
+    @JsonProperty("Requested Date")
+    private String requestedDate;
+
+    @JsonProperty("Status")
     private String status;
+
+    @JsonProperty("Reason")
     private String reason;
-    private LocalDateTime createdAt;
+
+    @JsonProperty("reated at")
+    private String createdAt; 
 }

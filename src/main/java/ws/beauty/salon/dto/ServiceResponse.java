@@ -1,7 +1,7 @@
 package ws.beauty.salon.dto;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -20,7 +20,7 @@ public class ServiceResponse {
     private Double price;
 
     @JsonProperty("estimated_duration")
-    private Duration estimatedDuration;
+    private LocalTime estimatedDuration;
 
     @JsonProperty("category_name")
     private String categoryName;

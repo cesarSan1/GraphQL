@@ -1,33 +1,42 @@
 package ws.beauty.salon.model;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+//import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "stylist_services")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class StylistService {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_stylist_services")
-    private Integer id;
 
+    @EmbeddedId
+    private StylistServiceId id;
+
+    //@MapsId("stylistId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_stylist", nullable = false)
+    @JoinColumn(name = "id_stylist", nullable = false, insertable = false, updatable = false) 
     private Stylist stylist;
 
+    //@MapsId("serviceId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_service", nullable = false)
+    @JoinColumn(name = "id_service", nullable = false, insertable = false, updatable = false)
     private Service service;
-
+    
+    //@MapsId("appointmentId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_appointment", nullable = false, insertable = false, updatable = false)
+    private Appointment appointment;
 }

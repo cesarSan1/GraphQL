@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -73,6 +74,25 @@ public class UserController {
     @PutMapping("/{id}")
     public UserResponse update(@PathVariable Integer id, @RequestBody UserRequest userRequest) {
         return userService.update(id, userRequest);
+    }
+
+    @Operation(summary = "Get the authenticated user (requires JWT)")
+    @ApiResponse(responseCode = "200", description = "Authenticated user found", 
+        content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class)))
+    @GetMapping("/me")
+    public ResponseEntity<User> getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(currentUser);
+    }
+    
+    @Operation(summary = "Get all users (requires JWT)")
+    @ApiResponse(responseCode = "200", description = "List of users", 
+        content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserResponse.class))))
+    @GetMapping("/protected")
+    public ResponseEntity<List<UserResponse>> getAllProtected() {
+        List<UserResponse> users = userService.findAll();
+        return ResponseEntity.ok(users);
     }
 
     // ------------------- CONSULTAS ESPECIALIZADAS -------------------

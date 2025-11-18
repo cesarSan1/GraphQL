@@ -1,7 +1,7 @@
 package ws.beauty.salon.model;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,7 +35,7 @@ public class Service {
     private Double price;
 
     @Column(name = "estimated_duration")
-    private Duration estimatedDuration;
+    private LocalTime estimatedDuration;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_category")

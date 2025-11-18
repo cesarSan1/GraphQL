@@ -9,7 +9,7 @@ public final class UserMapper {
         if (user == null) return null;
 
         return UserResponse.builder()
-                .id(user.getId())
+                .id(user.getIdUser())
                 .username(user.getUsername())
                 .role(user.getRole())
                 .clientId(user.getClient() != null ? user.getClient().getId() : null)

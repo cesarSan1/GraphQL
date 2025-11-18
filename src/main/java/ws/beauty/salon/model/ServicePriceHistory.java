@@ -8,38 +8,50 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Builder
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "service_price_history")
-public class PriceHistory {
+public class ServicePriceHistory {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_price")
     private Integer idPrice;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_service", nullable = false)
     private Service service;
-
+    
     @Column(name = "old_price", nullable = false)
-    private BigDecimal oldPrice;
-
+    private Double oldPrice;
+    
     @Column(name = "new_price", nullable = false)
-    private BigDecimal newPrice;
-
-    @Column(name = "changed_at")
-    private LocalDateTime changedAt;
-
+    private Double newPrice;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "changed_by")
-    private User user;
-
+    private User changedBy;
+    
+    @Column(name = "changed_at", nullable = false)
+    private LocalDateTime changedAt;
+    
+    @PrePersist
+    public void prePersist() {
+        if (changedAt == null) {
+            changedAt = LocalDateTime.now();
+        }
+    } 
 }
