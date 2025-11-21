@@ -9,6 +9,8 @@ public class BeautySalonApplication {
 	public static void main(String[] args) {
 	 System.setProperty("eureka.client.tls.enabled", "true");
         System.setProperty("eureka.client.tls.skipTlsValidation", "true");
+		
+        SpringApplication.run(BeautySalonApplication.class, args);
 	}
 
 }
