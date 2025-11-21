@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BeautySalonApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run("eureka.client.tls.skipTlsValidation", "true");
+	 System.setProperty("eureka.client.tls.enabled", "true");
+        System.setProperty("eureka.client.tls.skipTlsValidation", "true");
 	}
 
 }
