@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BeautySalonApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BeautySalonApplication.class, args);
+		SpringApplication.run("eureka.client.tls.skipTlsValidation", "true");
 	}
 
 }
